@@ -1,23 +1,35 @@
 import { FilterBuilderModel } from "./types";
-import { Stack } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { GroupItem } from ".";
+import { GridColDef, GridValidRowModel } from "@mui/x-data-grid-premium";
 
-interface FilterBuilderProps {
+interface FilterBuilderProps<T extends GridValidRowModel> {
   value: FilterBuilderModel;
   onChange: (value: FilterBuilderModel) => void;
+  fields: Array<GridColDef<T>>;
+  sx?: SxProps;
+  size?: "small" | "medium";
 }
 
-function FilterBuilder({ value, onChange }: FilterBuilderProps) {
+function FilterBuilder<T extends GridValidRowModel>({
+  value,
+  onChange,
+  fields,
+  sx,
+  size = "medium",
+}: FilterBuilderProps<T>) {
   return (
-    <Stack spacing={2}>
+    <Box sx={sx}>
       <GroupItem
         item={{
           ...value,
           id: "root",
         }}
         onChange={onChange}
+        fields={fields}
+        size={size}
       />
-    </Stack>
+    </Box>
   );
 }
 

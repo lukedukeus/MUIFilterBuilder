@@ -1,17 +1,34 @@
-import {
-  Button,
-  Menu,
-  MenuItem,
-  SelectChangeEvent,
-  SelectProps,
-} from "@mui/material";
+import { Button, Menu, MenuItem, SxProps } from "@mui/material";
 import { useState } from "react";
 
-interface SelectButtonProps<T> extends SelectProps<T> {
-  items: T[];
+interface SelectButtonProps<T> {
+  value: string;
+  items: Array<T>;
+  onChange?: (item: T) => void;
+  renderItem?: (item: T) => React.ReactNode;
+  children?: React.ReactNode;
+  size: "small" | "medium";
+  sx?: SxProps;
+  color?:
+    | "inherit"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "error"
+    | "info"
+    | "warning";
 }
 
-function SelectButton<T>({ value, onChange, items }: SelectButtonProps<T>) {
+function SelectButton<T>({
+  value,
+  onChange,
+  renderItem,
+  items,
+  children,
+  size,
+  sx,
+  color,
+}: SelectButtonProps<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,31 +39,22 @@ function SelectButton<T>({ value, onChange, items }: SelectButtonProps<T>) {
     setAnchorEl(null);
   };
 
-  const getDisplayValue = (item?: T | string) => {
-    // if string, return as is
-    if (typeof item === "string") {
-      return capitalize(item);
-    }
-    return "";
-  };
-
-  const capitalize = (s: string) => {
-    if (typeof s !== "string") return "";
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-  };
-
   const open = Boolean(anchorEl);
 
   return (
     <>
       <Button
+        sx={sx}
+        size={size}
+        color={color}
         id="select-button"
         aria-controls={open ? "select-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        variant="contained"
       >
-        {getDisplayValue(value)}
+        {renderItem ? renderItem(value) : value}
       </Button>
       <Menu
         id="select-menu"
@@ -57,25 +65,21 @@ function SelectButton<T>({ value, onChange, items }: SelectButtonProps<T>) {
           "aria-labelledby": "select-button",
         }}
       >
+        {items.length === 0 && <MenuItem disabled>No items</MenuItem>}
+        {children && children}
         {items.map((item, index) => (
           <MenuItem
             key={index}
             id={`select-menu-item-${index}`}
             onClick={() => {
               if (onChange) {
-                const event = {
-                  target: {
-                    value: item,
-                  },
-                } as SelectChangeEvent<T>;
-
-                onChange(event, null);
+                onChange(item);
               }
 
               handleMenuClose();
             }}
           >
-            {getDisplayValue(item)}
+            {renderItem ? renderItem(item) : item}
           </MenuItem>
         ))}
       </Menu>

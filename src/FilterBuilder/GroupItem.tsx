@@ -1,11 +1,11 @@
 import {
+  Box,
   IconButton,
   Menu,
   MenuItem,
-  SelectChangeEvent,
-  Stack,
   SxProps,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import {
   IConditionItem,
@@ -18,23 +18,33 @@ import ClearIcon from "@mui/icons-material/Clear";
 import SelectButton from "./SelectButton";
 import { useState } from "react";
 import { ConditionItem } from ".";
+import { GridColDef, GridValidRowModel } from "@mui/x-data-grid-premium";
 
-interface GroupItemProps {
+interface GroupItemProps<T extends GridValidRowModel> {
   item: IGroupItem;
+  fields: Array<GridColDef<T>>;
   onChange: (item: IGroupItem) => void;
   onRemove?: () => void;
   sx?: SxProps;
+  size: "small" | "medium";
 }
 
-function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
+function GroupItem<T extends GridValidRowModel>({
+  item,
+  onChange,
+  onRemove,
+  fields,
+  sx,
+  size,
+}: GroupItemProps<T>) {
+  const theme = useTheme();
+
   const [addMenuAnchorEl, setAddMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
   const open = Boolean(addMenuAnchorEl);
 
-  const handleOperatorChange = (e: SelectChangeEvent<GroupLogicOperator>) => {
-    const newOperator = e.target.value as GroupLogicOperator;
-
+  const handleOperatorChange = (newOperator: GroupLogicOperator) => {
     if (onChange) {
       onChange({
         ...item,
@@ -63,7 +73,7 @@ function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
   const handleAddCondition = () => {
     const newCondition: IConditionItem = {
       id: getNewItemId(),
-      field: "someField",
+      field: fields[0].field,
       operator: ConditionLogicOperator.Equals,
     };
 
@@ -103,11 +113,23 @@ function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
   };
 
   return (
-    <Stack direction="column" sx={sx}>
-      <Stack direction="row">
+    <Box sx={sx}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          ...sx,
+        }}
+      >
         {onRemove && (
           <Tooltip title="Remove">
-            <IconButton aria-label="remove" onClick={onRemove}>
+            <IconButton
+              aria-label="remove"
+              onClick={onRemove}
+              sx={{
+                color: theme.palette.error.main,
+              }}
+            >
               <ClearIcon />
             </IconButton>
           </Tooltip>
@@ -117,9 +139,20 @@ function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
           items={Object.values(GroupLogicOperator)}
           value={item.operator}
           onChange={handleOperatorChange}
+          size={size}
+          color="error"
+          sx={{
+            margin: 1,
+          }}
         />
         <Tooltip title="Add">
-          <IconButton aria-label="add" onClick={handleAddClick}>
+          <IconButton
+            aria-label="add"
+            onClick={handleAddClick}
+            sx={{
+              color: theme.palette.success.main,
+            }}
+          >
             <AddIcon />
           </IconButton>
         </Tooltip>
@@ -135,19 +168,21 @@ function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
           <MenuItem onClick={handleAddCondition}>Add Condition</MenuItem>
           <MenuItem onClick={handleAddGroup}>Add Group</MenuItem>
         </Menu>
-      </Stack>
+      </Box>
 
       {item.items.map((item, index) => {
-        const style = { ...sx, pl: 2, borderLeft: "1px solid #ccc" };
+        const style = { ...sx, pl: 4 };
 
         if ("field" in item) {
           return (
             <ConditionItem
               key={index}
               item={item}
+              fields={fields}
               onChange={handleItemChange}
               onRemove={() => handleRemove(item.id)}
               sx={style}
+              size={size}
             />
           );
         }
@@ -156,13 +191,15 @@ function GroupItem({ item, onChange, onRemove, sx }: GroupItemProps) {
           <GroupItem
             key={index}
             item={item}
+            fields={fields}
             onChange={handleItemChange}
             onRemove={() => handleRemove(item.id)}
             sx={style}
+            size={size}
           />
         );
       })}
-    </Stack>
+    </Box>
   );
 }
 

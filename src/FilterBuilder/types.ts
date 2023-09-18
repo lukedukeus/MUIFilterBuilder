@@ -1,3 +1,5 @@
+import { GridColType } from "@mui/x-data-grid-premium";
+
 export interface FilterBuilderModel {
   operator: GroupLogicOperator;
   items: Array<IConditionItem | IGroupItem>;
@@ -8,9 +10,15 @@ export enum GroupLogicOperator {
   Or = "or",
 }
 
+export type FieldType = GridColType;
+
 export enum ConditionLogicOperator {
   Equals = "=",
   DoesNotEqual = "<>",
+  GreaterThan = ">",
+  LessThan = "<",
+  GreaterThanOrEqual = ">=",
+  LessThanOrEqual = "<=",
 }
 
 export interface IFilterItem {
