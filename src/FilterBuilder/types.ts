@@ -1,6 +1,6 @@
 export interface FilterBuilderModel {
-  logicOperator: GroupLogicOperator;
-  items: Array<ConditionItem | GroupItem>;
+  operator: GroupLogicOperator;
+  items: Array<IConditionItem | IGroupItem>;
 }
 
 export enum GroupLogicOperator {
@@ -13,14 +13,14 @@ export enum ConditionLogicOperator {
   DoesNotEqual = "<>",
 }
 
-export interface FilterItem {
+export interface IFilterItem {
   id: string;
 }
 
-export interface ConditionItem extends FilterItem {
+export interface IConditionItem extends IFilterItem {
   field: string;
-  operator: GroupLogicOperator;
-  value: string;
+  operator: ConditionLogicOperator;
+  value?: string;
 }
 
-export interface GroupItem extends FilterBuilderModel, FilterItem {}
+export interface IGroupItem extends FilterBuilderModel, IFilterItem {}

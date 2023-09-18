@@ -8,7 +8,7 @@ import {
 
 function App() {
   const [filter, setFilter] = useState<FilterBuilderModel>({
-    logicOperator: GroupLogicOperator.And,
+    operator: GroupLogicOperator.And,
     items: [],
   });
 

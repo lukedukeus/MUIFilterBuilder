@@ -16,9 +16,6 @@ function FilterBuilder({ value, onChange }: FilterBuilderProps) {
           id: "root",
         }}
         onChange={onChange}
-        onAddCondition={() => console.log("onAddCondition")}
-        onAddGroup={() => console.log("onAddGroup")}
-        onRemove={() => console.log("onRemove")}
       />
     </Stack>
   );
