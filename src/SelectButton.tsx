@@ -2,7 +2,7 @@ import { Button, Menu, MenuItem, SxProps } from "@mui/material";
 import { useState } from "react";
 
 interface SelectButtonProps<T> {
-  value: string;
+  value: T;
   items: Array<T>;
   onChange?: (item: T) => void;
   renderItem?: (item: T) => React.ReactNode;
@@ -54,7 +54,7 @@ function SelectButton<T>({
         onClick={handleClick}
         variant="contained"
       >
-        {renderItem ? renderItem(value) : value}
+        {renderItem ? renderItem(value) : String(value)}
       </Button>
       <Menu
         id="select-menu"
@@ -79,7 +79,7 @@ function SelectButton<T>({
               handleMenuClose();
             }}
           >
-            {renderItem ? renderItem(item) : item}
+            {renderItem ? renderItem(item) : String(item)}
           </MenuItem>
         ))}
       </Menu>

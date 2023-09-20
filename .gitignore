@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# yarn lockfile
+# lockfiles
 yarn.lock
+package-lock.json
